@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/card";
 import { PageContainer } from "@/components/layout/page-container";
 import { PageHeader } from "@/components/layout/page-header";
+import { TodayTasks } from "@/features/tasks/components/today-tasks";
 
 export default function Home() {
   return (
@@ -27,9 +28,7 @@ export default function Home() {
             </CardHeader>
 
             <CardContent>
-              <p className="text-sm text-muted-foreground">
-                No tasks yet.
-              </p>
+              <TodayTasks />
             </CardContent>
           </Card>
 
