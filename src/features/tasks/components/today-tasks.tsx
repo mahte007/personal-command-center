@@ -1,46 +1,34 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { useTasks } from "../hooks/use-tasks";
 import Link from "next/link";
+
 import { Checkbox } from "@/components/ui/checkbox";
-
-function getLocalDateString() {
-  const date = new Date();
-
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-}
+import {
+  getTasksDueOn,
+  getTodayDateString,
+} from "@/features/tasks/task-selectors";
+import { useTasks } from "@/features/tasks/task-provider";
 
 export function TodayTasks() {
   const { tasks, loaded, toggleTask } = useTasks();
 
   if (!loaded) {
-    return <p className="text-sm text-muted-foreground">Loading...</p>;
+    return <p className="text-sm text-muted-foreground">Loading…</p>;
   }
 
-  const today = getLocalDateString();
-
-  const todayTasks = tasks.filter(
-    (task) => task.status === "todo" && task.dueDate === today,
-  );
+  const todayTasks = getTasksDueOn(tasks, getTodayDateString());
 
   if (todayTasks.length === 0) {
     return (
       <div>
         <p className="text-sm text-muted-foreground">Nothing due today.</p>
 
-        <Button variant="ghost" size="sm" className="mt-3">
-          <Link
-            href="/tasks"
-            className="text-sm font-medium text-muted-foreground hover:text-foreground"
-          >
-            View Tasks
-          </Link>
-        </Button>
+        <Link
+          href="/tasks"
+          className="mt-3 inline-block text-sm font-medium text-muted-foreground hover:text-foreground"
+        >
+          View tasks
+        </Link>
       </div>
     );
   }
@@ -48,24 +36,23 @@ export function TodayTasks() {
   return (
     <div className="flex flex-col gap-3">
       {todayTasks.slice(0, 5).map((task) => (
-        <label key={task.id} className="flex items-center gap-3 text-sm">
+        <div key={task.id} className="flex items-center gap-3">
           <Checkbox
             checked={false}
             onCheckedChange={() => toggleTask(task.id)}
+            aria-label={`Complete ${task.title}`}
           />
 
-          <span className="truncate">{task.title}</span>
-        </label>
+          <span className="min-w-0 flex-1 truncate text-sm">{task.title}</span>
+        </div>
       ))}
 
-      <Button variant="ghost" size="sm">
-        <Link
-          href="/tasks"
-          className="text-sm font-medium text-muted-foreground hover:text-foreground"
-        >
-          View all tasks
-        </Link>
-      </Button>
+      <Link
+        href="/tasks"
+        className="text-sm font-medium text-muted-foreground hover:text-foreground"
+      >
+        View all tasks
+      </Link>
     </div>
   );
 }
