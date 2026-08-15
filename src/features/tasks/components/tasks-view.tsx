@@ -8,6 +8,7 @@ import { TaskForm } from "@/features/tasks/components/task-form";
 import { TaskList } from "@/features/tasks/components/task-list";
 import { useTasks } from "@/features/tasks/task-provider";
 import type { Task, TaskPriority } from "@/features/tasks/task-types";
+import { useToast } from "@/components/ui/toast-provider";
 
 type TaskFilter = "all" | "active" | "completed";
 
@@ -21,8 +22,10 @@ const priorityWeight: Record<TaskPriority, number> = {
 };
 
 export function TasksView() {
-  const { tasks, loaded, addTask, toggleTask, updateTask, deleteTask } =
+  const { tasks, loaded, addTask, toggleTask, updateTask, deleteTask, restoreTask } =
     useTasks();
+
+  const { showToast } = useToast()
 
   const [filter, setFilter] = useState<TaskFilter>("all");
 
@@ -67,6 +70,25 @@ export function TasksView() {
       return b.createdAt.localeCompare(a.createdAt);
     });
   }, [tasks, filter, sort]);
+
+  function handleDeleteTask(taskId: string) {
+    const task = tasks.find((task) => task.id === taskId)
+
+    if (!task) return;
+
+    deleteTask(taskId);
+
+    showToast({
+      title: "Task deleted",
+      description: task.title,
+      action: {
+        label: "Undo",
+        onClick: () => {
+          restoreTask(task)
+        }
+      }
+    })
+  }
 
   if (!loaded) {
     return <p className="text-sm text-muted-foreground">Loading tasks…</p>;
@@ -120,7 +142,7 @@ export function TasksView() {
       <TaskList
         tasks={visibleTasks}
         onToggle={toggleTask}
-        onDelete={deleteTask}
+        onDelete={handleDeleteTask}
         onEdit={setEditingTask}
       />
 

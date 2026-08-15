@@ -1,5 +1,7 @@
+import { EmptyState } from "@/components/ui/empty-state-";
 import { Task } from "../task-types";
 import { TaskItem } from "./task-item";
+import { CheckSquare } from "lucide-react";
 
 interface TaskListProps {
   tasks: Task[];
@@ -11,13 +13,11 @@ interface TaskListProps {
 export function TaskList({ tasks, onToggle, onDelete, onEdit }: TaskListProps) {
   if (tasks.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-border p-8 text-center">
-        <p className="font-medium">No tasks</p>
-
-        <p className="mt-1 text-sm text-muted-foreground">
-          Add a task to get started
-        </p>
-      </div>
+      <EmptyState 
+        icon={CheckSquare}
+        title="No tasks"
+        description="Add a task to get started"
+      />
     );
   }
 
