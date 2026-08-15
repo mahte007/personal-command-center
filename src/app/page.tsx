@@ -1,7 +1,84 @@
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { PageContainer } from "@/components/layout/page-container";
+import { PageHeader } from "@/components/layout/page-header";
+
 export default function Home() {
   return (
-    <main>
-      <h1>Personal Command Center</h1>
-    </main>
+    <PageContainer>
+      <div className="flex flex-col gap-8">
+        <PageHeader
+          title="Good evening"
+          description="Here’s what’s happening today."
+        />
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <CardTitle>Today</CardTitle>
+              <CardDescription>
+                Tasks that need your attention
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                No tasks yet.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Upcoming</CardTitle>
+              <CardDescription>
+                Your next scheduled events
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                No upcoming events.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Quick Notes</CardTitle>
+              <CardDescription>
+                Recently edited notes
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                No notes yet.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Activity</CardTitle>
+              <CardDescription>
+                Your latest actions
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Nothing has happened yet.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </PageContainer>
   );
 }
