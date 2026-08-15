@@ -1,45 +1,10 @@
 "use client";
 
-import {
-  CalendarDays,
-  CheckSquare,
-  Home,
-  NotebookText,
-  Settings,
-} from "lucide-react";
+import { Settings } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { SidebarNavItem } from "./side-nav-item";
 
-const primaryNavigation = [
-  {
-    label: "Home",
-    href: "/",
-    icon: Home,
-  },
-  {
-    label: "Tasks",
-    href: "/tasks",
-    icon: CheckSquare,
-  },
-  {
-    label: "Calender",
-    href: "/calendar",
-    icon: CalendarDays,
-  },
-  {
-    label: "Notes",
-    href: "/notes",
-    icon: NotebookText,
-  },
-];
-
-function isRouteActive(pathname: string, href: string) {
-  if (href === "/") {
-    return pathname === "/";
-  }
-
-  return pathname.startsWith(href);
-}
+import { primaryNavigation, isRouteActive } from "@/config/navigation";
 
 export function Sidebar() {
   const pathname = usePathname();
