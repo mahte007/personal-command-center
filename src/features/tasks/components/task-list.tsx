@@ -5,9 +5,10 @@ interface TaskListProps {
   tasks: Task[];
   onToggle: (taskId: string) => void;
   onDelete: (taskId: string) => void;
+  onEdit: (task: Task) => void;
 }
 
-export function TaskList({ tasks, onToggle, onDelete }: TaskListProps) {
+export function TaskList({ tasks, onToggle, onDelete, onEdit }: TaskListProps) {
   if (tasks.length === 0) {
     return (
       <div className="rounded-lg border border-dashed border-border p-8 text-center">
@@ -28,6 +29,7 @@ export function TaskList({ tasks, onToggle, onDelete }: TaskListProps) {
           task={task}
           onToggle={onToggle}
           onDelete={onDelete}
+          onEdit={onEdit}
         />
       ))}
     </div>

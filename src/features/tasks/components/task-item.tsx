@@ -1,16 +1,19 @@
-import { CalendarDays, Trash2 } from "lucide-react";
+import { CalendarDays, Pencil, Trash2 } from "lucide-react";
 import { Task } from "../task-types";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { formatTaskDueDate } from "@/features/tasks/task-utils";
 
 interface TaskItemProps {
   task: Task;
   onToggle: (taskId: string) => void;
   onDelete: (taskId: string) => void;
+  onEdit: (task: Task) => void;
 }
 
-export function TaskItem({ task, onDelete, onToggle }: TaskItemProps) {
+export function TaskItem({ task, onDelete, onToggle, onEdit }: TaskItemProps) {
   const completed = task.status === "completed";
 
   return (
@@ -20,16 +23,14 @@ export function TaskItem({ task, onDelete, onToggle }: TaskItemProps) {
         completed && "opacity-60",
       )}
     >
-      <input
-        type="checkbox"
+      <Checkbox
         checked={completed}
-        onChange={() => onToggle(task.id)}
+        onCheckedChange={() => onToggle(task.id)}
         aria-label={
           completed
             ? `Mark ${task.title} incomplete`
             : `Mark ${task.title} complete`
         }
-        className="mt-1 size-4"
       />
 
       <div className="min-w-0 flex-1">
@@ -52,19 +53,30 @@ export function TaskItem({ task, onDelete, onToggle }: TaskItemProps) {
         {task.dueDate ? (
           <div className="mt-2 flex items-center gap-1 text-xs text-muted-foreground">
             <CalendarDays className="size-3.5" />
-            {task.dueDate}
+            {formatTaskDueDate(task.dueDate)}
           </div>
         ) : null}
       </div>
 
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => onDelete(task.id)}
-        aria-label={`Delete ${task.title}`}
-      >
-        <Trash2 />
-      </Button>
+      <div className="flex shrink-0 items-center gap-1">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onEdit(task)}
+          aria-label={`Edit ${task.title}`}
+        >
+          <Pencil />
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onDelete(task.id)}
+          aria-label={`Delete ${task.title}`}
+        >
+          <Trash2 />
+        </Button>
+      </div>
     </div>
   );
 }

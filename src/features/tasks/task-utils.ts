@@ -26,3 +26,11 @@ export function createTask({
     updatedAt: now,
   };
 }
+
+export function formatTaskDueDate(dueDate: string) {
+  return new Intl.DateTimeFormat(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(new Date(`${dueDate}T00:00:00`));
+}

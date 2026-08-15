@@ -5,63 +5,63 @@ import { useState } from "react";
 interface TaskFormValues {
   title: string;
   priority: TaskPriority;
+  dueDate?: string;
 }
 
 interface TaskFormProps {
-    onSubmit: (values: TaskFormValues) => void;
+  onSubmit: (values: TaskFormValues) => void;
 }
 
-export function TaskForm({
-    onSubmit
-}: TaskFormProps) {
-    const [title, setTitle] = useState("");
-    const [priority, setPriority] = useState<TaskPriority>("none")
+export function TaskForm({ onSubmit }: TaskFormProps) {
+  const [title, setTitle] = useState("");
+  const [priority, setPriority] = useState<TaskPriority>("none");
+  const [dueDate, setDueDate] = useState("");
 
-    function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
-        event.preventDefault();
+  function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
+    event.preventDefault();
 
-        const trimmedTitle = title.trim();
+    const trimmedTitle = title.trim();
 
-        if (!trimmedTitle) {
-            return;
-        }
-
-        onSubmit({
-            title: trimmedTitle,
-            priority,
-        });
-
-        setTitle("");
-        setPriority("none");
+    if (!trimmedTitle) {
+      return;
     }
 
-    return(
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:flex-row">
-            <Input 
-                value={title}
-                onChange={(event) => setTitle(event.target.value)}
-                placeholder="What needs to be done?"
-                aria-label="Task title"
-            />
+    onSubmit({
+      title: trimmedTitle,
+      priority,
+      dueDate: dueDate || undefined,
+    });
 
-            <select
-                value={priority}
-                onChange={(event) => setPriority(event.target.value as TaskPriority)}
-                className="h-10 rounded-md border border-input bg-background px-3 text-sm"
-            >
-                <option value={"none"}>
-                    No priority
-                </option>
-                <option value={"low"}>
-                    Low
-                </option>
-                <option value={"medium"}>
-                    Medium
-                </option>
-                <option value={"high"}>
-                    High
-                </option>
-            </select>
-        </form>
-    )
+    setDueDate("");
+    setTitle("");
+    setPriority("none");
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:flex-row">
+      <Input
+        value={title}
+        onChange={(event) => setTitle(event.target.value)}
+        placeholder="What needs to be done?"
+        aria-label="Task title"
+      />
+
+      <select
+        value={priority}
+        onChange={(event) => setPriority(event.target.value as TaskPriority)}
+        className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+      >
+        <option value={"none"}>No priority</option>
+        <option value={"low"}>Low</option>
+        <option value={"medium"}>Medium</option>
+        <option value={"high"}>High</option>
+      </select>
+
+      <Input
+        type="date"
+        value={dueDate}
+        onChange={(event) => setDueDate(event.target.value)}
+      />
+    </form>
+  );
 }

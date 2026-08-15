@@ -1,84 +1,58 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
+import { TaskEditDialog } from "@/features/tasks/components/task-edit-dialog";
 import { TaskForm } from "@/features/tasks/components/task-form";
 import { TaskList } from "@/features/tasks/components/task-list";
-import { getTasks, saveTasks } from "@/features/tasks/task-storage";
+import { useTasks } from "@/features/tasks/hooks/use-tasks";
 import type { Task } from "@/features/tasks/task-types";
-import { createTask } from "@/features/tasks/task-utils";
 import { Button } from "@/components/ui/button";
 
 type TaskFilter = "all" | "active" | "completed";
 
+type TaskSort = "created" | "due-date" | "priority";
+
 export function TasksView() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [loaded, setLoaded] = useState(false);
+  const { tasks, loaded, addTask, toggleTask, updateTask, deleteTask } = useTasks();
   const [filter, setFilter] = useState<TaskFilter>("all");
+  const [sort, setSort] = useState<TaskSort>("created");
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setTasks(getTasks());
-    setLoaded(true);
-  }, []);
+  const visibleTasks = tasks
+    .filter((task) => {
+      if (filter === "active") {
+        return task.status === "todo";
+      }
 
-  useEffect(() => {
-    if (!loaded) {
-      return;
-    }
+      if (filter === "completed") {
+        return task.status === "completed";
+      }
 
-    saveTasks(tasks);
-  }, [tasks, loaded]);
+      return true;
+    })
+    .toSorted((a, b) => {
+      if (sort === "due-date") {
+        if (!a.dueDate && !b.dueDate) return 0;
+        if (!a.dueDate) return 1;
+        if (!b.dueDate) return -1;
 
-  const visibleTasks = tasks.filter((task) => {
-    if (filter === "active") {
-      return task.status === "todo";
-    }
+        return a.dueDate.localeCompare(b.dueDate);
+      }
 
-    if (filter === "completed") {
-      return task.status === "completed";
-    }
-
-    return true;
-  });
-
-  function handleCreateTask({
-    title,
-    priority,
-  }: {
-    title: string;
-    priority: Task["priority"];
-  }) {
-    const task = createTask({
-      title,
-      priority,
-    });
-
-    setTasks((current) => [task, ...current]);
-  }
-
-  function handleToggleTask(taskId: string) {
-    setTasks((current) =>
-      current.map((task) => {
-        if (task.id !== taskId) {
-          return task;
-        }
-
-        const completed = task.status !== "completed";
-
-        return {
-          ...task,
-          status: completed ? "completed" : "todo",
-          completedAt: completed ? new Date().toISOString() : undefined,
-          updatedAt: new Date().toISOString(),
+      if (sort === "priority") {
+        const weight = {
+          high: 3,
+          medium: 2,
+          low: 1,
+          none: 0,
         };
-      }),
-    );
-  }
 
-  function handleDeleteTask(taskId: string) {
-    setTasks((current) => current.filter((task) => task.id !== taskId));
-  }
+        return weight[b.priority] - weight[a.priority];
+      }
+
+      return b.createdAt.localeCompare(a.createdAt);
+    });
 
   if (!loaded) {
     return <p className="text-sm text-muted-foreground">Loading tasks...</p>;
@@ -86,7 +60,7 @@ export function TasksView() {
 
   return (
     <div className="flex flex-col gap-6">
-      <TaskForm onSubmit={handleCreateTask} />
+      <TaskForm onSubmit={addTask} />
 
       <div className="flex gap-2">
         <Button
@@ -114,10 +88,32 @@ export function TasksView() {
         </Button>
       </div>
 
+      <select
+        value={sort}
+        onChange={(event) => setSort(event.target.value as TaskSort)}
+        className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+      >
+        <option value="created">Newest</option>
+        <option value="due-date">Due date</option>
+        <option value="priority">Priority</option>
+      </select>
+
       <TaskList
         tasks={visibleTasks}
-        onToggle={handleToggleTask}
-        onDelete={handleDeleteTask}
+        onToggle={toggleTask}
+        onDelete={deleteTask}
+        onEdit={setEditingTask}
+      />
+
+      <TaskEditDialog
+        task={editingTask}
+        open={editingTask !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setEditingTask(null);
+          }
+        }}
+        onSave={updateTask}
       />
     </div>
   );
