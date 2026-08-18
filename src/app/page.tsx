@@ -8,6 +8,7 @@ import {
 import { PageContainer } from "@/components/layout/page-container";
 import { PageHeader } from "@/components/layout/page-header";
 import { TodayTasks } from "@/features/tasks/components/today-tasks";
+import { RecentNotes } from "@/features/notes/components/recent-notes";
 
 export default function Home() {
   return (
@@ -49,17 +50,14 @@ export default function Home() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Quick Notes</CardTitle>
+              <CardTitle>Recent Notes</CardTitle>
               <CardDescription>
                 Recently edited notes
               </CardDescription>
+              <CardContent>
+                <RecentNotes />
+              </CardContent>
             </CardHeader>
-
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                No notes yet.
-              </p>
-            </CardContent>
           </Card>
 
           <Card>
