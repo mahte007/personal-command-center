@@ -20,6 +20,7 @@ interface TaskContextValue {
   toggleTask: (taskId: string) => void;
   updateTask: (task: Task) => void;
   deleteTask: (taskId: string) => void;
+  restoreTask: (task: Task) => void;
 }
 
 const TaskContext = createContext<TaskContextValue | null>(null);
@@ -86,6 +87,16 @@ export function TaskProvider({ children }: TaskProviderProps) {
     setTasks((current) => current.filter((task) => task.id !== taskId));
   }
 
+  function restoreTask(task: Task) {
+    setTasks((current) => {
+      const exists = current.some((currentTask) => currentTask.id === task.id);
+
+      if (exists) return current;
+
+      return [task, ...current];
+    })
+  }
+
   const value = useMemo(
     () => ({
       tasks,
@@ -94,6 +105,7 @@ export function TaskProvider({ children }: TaskProviderProps) {
       toggleTask,
       updateTask,
       deleteTask,
+      restoreTask,
     }),
     [tasks, loaded],
   );
