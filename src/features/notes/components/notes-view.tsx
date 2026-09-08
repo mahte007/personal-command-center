@@ -57,7 +57,7 @@ export function NotesView() {
 
   return (
     <div className="overflow-hidden rounded-xl border border-border bg-surface">
-      <div className="grid min-h-162.5 md:grid-cols-[280px]">
+      <div className="grid min-h-162.5 md:grid-cols-2">
         <aside className="border-r border-border">
           <div className="flex h-16 items-center justify-between border-b border-border px-4">
             <span className="font-medium">Notes</span>
